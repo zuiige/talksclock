@@ -33,13 +33,16 @@ const DEFAULT_TASKS: Array<{ name: string; duration: number }> = [
 ];
 
 export default function TimerPage() {
-  const [tasks, setTasks] = useState<TimerTask[]>(() =>
-    DEFAULT_TASKS.map((t) => createTask(t.name, t.duration))
-  );
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(() => {
-    const initial = DEFAULT_TASKS.map((t) => createTask(t.name, t.duration));
-    return initial.length > 0 ? initial[0].id : null;
-  });
+  const [mounted, setMounted] = useState(false);
+
+  // All state initialized after mount to avoid hydration mismatch
+  // (crypto.randomUUID(), Date.now(), window.innerWidth differ between SSR and client)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const [tasks, setTasks] = useState<TimerTask[]>([]);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const [displayStyle, setDisplayStyle] = useState<DisplayStyle>('classic');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [warnAtPercent, setWarnAtPercent] = useState(20);
@@ -49,13 +52,22 @@ export default function TimerPage() {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Initialize default tasks on client only (uses crypto.randomUUID)
+  useEffect(() => {
+    if (!mounted) return;
+    const initial = DEFAULT_TASKS.map((t) => createTask(t.name, t.duration));
+    setTasks(initial);
+    setActiveTaskId(initial.length > 0 ? initial[0].id : null);
+  }, [mounted]);
+
   // Detect mobile screen
   useEffect(() => {
+    if (!mounted) return;
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [mounted]);
 
   const activeTask = tasks.find((t) => t.id === activeTaskId) ?? tasks[0] ?? null;
 
@@ -101,9 +113,19 @@ export default function TimerPage() {
   // Warn threshold in milliseconds
   const warnAtMs = activeTask ? (warnAtPercent / 100) * activeTask.duration * 1000 : 60000;
 
-  // Use countdown hook
+  // Use countdown hook — use stable empty task object to avoid crypto.randomUUID() on SSR
+  const emptyTask: TimerTask = {
+    id: '__empty__',
+    name: '',
+    duration: 0,
+    remaining: 0,
+    status: 'idle',
+    startedAt: null,
+    pausedRemaining: null,
+  };
+
   const countdown = useCountdown(
-    activeTask ?? createTask('', 0),
+    activeTask ?? emptyTask,
     handleUpdateTask,
     {
       onWarn: () => {
@@ -250,6 +272,18 @@ export default function TimerPage() {
       </div>
     </>
   );
+
+  // Hydration guard: don't render dynamic content until client-side mounted
+  if (!mounted) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#0a0a0f]">
+        <div className="flex flex-col items-center gap-3">
+          <Timer className="h-10 w-10 text-green-400 animate-pulse" />
+          <span className="text-sm text-white/30">加载中...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-[#0a0a0f] text-white overflow-hidden">

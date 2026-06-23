@@ -99,7 +99,7 @@ export function SettingsPanel({
           <Settings2 className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
+      <DialogContent className="bg-[#1a1a2e] border-white/10 text-white" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-white">设置</DialogTitle>
         </DialogHeader>

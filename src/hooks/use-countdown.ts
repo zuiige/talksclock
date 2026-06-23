@@ -40,8 +40,8 @@ export function useCountdown(
     if (task.status === 'completed') {
       return 0;
     }
-    // running
-    if (task.startedAt !== null) {
+    // running - only compute dynamic remaining on client
+    if (typeof window !== 'undefined' && task.startedAt !== null) {
       const elapsed = Date.now() - task.startedAt;
       const base = task.pausedRemaining ?? task.duration * 1000;
       return Math.max(0, base - elapsed);

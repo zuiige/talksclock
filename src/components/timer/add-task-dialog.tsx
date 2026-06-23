@@ -47,7 +47,7 @@ export function AddTaskDialog({ open, onOpenChange, onAdd, defaultName = '' }: A
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-[#1a1a2e] border-white/10 text-white sm:max-w-md">
+      <DialogContent className="bg-[#1a1a2e] border-white/10 text-white sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-white">添加演讲环节</DialogTitle>
         </DialogHeader>
