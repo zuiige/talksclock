@@ -37,8 +37,8 @@ function getStatusColor(status: TimerTask['status']): string {
 
 export function TaskList({ tasks, activeTaskId, onSelectTask, onAddTask, onRemoveTask, onUpdateTask }: TaskListProps) {
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between px-1 mb-3">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex items-center justify-between px-1 mb-3 flex-shrink-0">
         <h3 className="text-sm font-semibold text-white/60 tracking-wide uppercase">演讲环节</h3>
         <Button
           variant="ghost"
@@ -51,7 +51,7 @@ export function TaskList({ tasks, activeTaskId, onSelectTask, onAddTask, onRemov
         </Button>
       </div>
 
-      <ScrollArea className="flex-1 -mx-1">
+      <ScrollArea className="min-h-0 flex-1 -mx-1">
         <div className="space-y-1.5 px-1">
           {tasks.length === 0 && (
             <div className="py-8 text-center text-sm text-white/30">

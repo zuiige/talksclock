@@ -244,7 +244,7 @@ export default function TimerPage() {
         )}
       </div>
 
-      <div className="flex-1 overflow-hidden px-3 py-3">
+      <div className="flex-1 min-h-0 overflow-hidden px-3 py-3">
         <TaskList
           tasks={tasks}
           activeTaskId={activeTaskId}
@@ -289,7 +289,7 @@ export default function TimerPage() {
     <div className="flex h-screen bg-[#0a0a0f] text-white overflow-hidden">
       {/* Desktop Sidebar */}
       {!isMobile && sidebarOpen && (
-        <aside className="w-72 flex-shrink-0 border-r border-white/5 bg-[#0f0f1a] flex flex-col">
+        <aside className="w-72 flex-shrink-0 border-r border-white/5 bg-[#0f0f1a] flex flex-col min-h-0">
           {sidebarContent}
         </aside>
       )}
