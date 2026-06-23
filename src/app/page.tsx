@@ -98,6 +98,10 @@ export default function TimerPage() {
     });
   }, [tasks]);
 
+  const handleReorderTasks = useCallback((reordered: TimerTask[]) => {
+    setTasks(reordered);
+  }, []);
+
   const handleSelectTask = useCallback((id: string) => {
     setActiveTaskId(id);
     // Close sidebar on mobile after selection
@@ -252,6 +256,7 @@ export default function TimerPage() {
           onAddTask={() => setAddDialogOpen(true)}
           onRemoveTask={handleRemoveTask}
           onUpdateTask={handleUpdateTask}
+          onReorderTasks={handleReorderTasks}
         />
       </div>
 
